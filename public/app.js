@@ -590,7 +590,6 @@ function onQrScanSuccess(decodedText, decodedResult) {
   // When a QR is scanned, the decodedText is the ID of the card
   console.log(`QR Scanned successfully: ${decodedText}`);
   stopQRScanner();
- 
 
   // Play a brief beep alert or update status
   scannerStatus.textContent = 'Scanned!';
