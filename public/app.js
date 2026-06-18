@@ -590,7 +590,7 @@ function onQrScanSuccess(decodedText, decodedResult) {
   // When a QR is scanned, the decodedText is the ID of the card
   console.log(`QR Scanned successfully: ${decodedText}`);
   stopQRScanner();
-  document.getElementById('basket-summary'),scrollIntoView({ 
+  document.getElementById('basket-summary').scrollIntoView({ 
     behavior: 'smooth', // Animates the scroll smoothly instead of a sudden jump
     block: 'start'      // Aligns the top of the div to the top of the viewport
   });
