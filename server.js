@@ -164,22 +164,19 @@ app.delete('/api/auth/users/:id', authenticateToken, isAdmin, async (req, res) =
 
 // List cards
 app.get('/api/cards', authenticateToken, isSalespersonOrAdmin, async (req, res) => {
-  const { name, year, number, rarity, language, condition, search } = req.query;
+  const { name, /*year,*/ number, rarity, language, condition, search } = req.query;
   let sql = 'SELECT * FROM cards WHERE 1=1';
   const params = [];
 
   if (search) {
-    sql += ' AND (name LIKE ? OR card_number LIKE ?)';
+    sql += ' AND (name LIKE ? OR card_number LIKE ?як)';
     params.push(`%${search}%`, `%${search}%`);
   }
   if (name) {
     sql += ' AND name LIKE ?';
     params.push(`%${name}%`);
   }
-  if (year) {
-    sql += ' AND year_made = ?';
-    params.push(parseInt(year));
-  }
+  
   if (number) {
     sql += ' AND card_number = ?';
     params.push(number);
@@ -224,9 +221,9 @@ app.get('/api/cards/:id', authenticateToken, isSalespersonOrAdmin, async (req, r
 
 // Add a card (Admin only)
 app.post('/api/cards', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
-  const { name, year_made, card_number, price, rarity, language, quantity, card_condition } = req.body;
+  const { name, /*year_made,*/ card_number, price, rarity, language, quantity, card_condition } = req.body;
 
-  if (!name || !year_made || !card_number || !price || !rarity || !language || !quantity || !card_condition) {
+  if (!name || /*!year_made ||*/ !card_number || !price || !rarity || !language || !quantity || !card_condition) {
     return res.status(400).json({ error: 'Please provide all card fields.' });
   }
 
@@ -234,9 +231,9 @@ app.post('/api/cards', authenticateToken, isAdmin, upload.single('image'), async
 
   try {
     const [result] = await pool.query(
-      `INSERT INTO cards (name, year_made, card_number, price, rarity, language, quantity, card_condition, image_url) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, parseInt(year_made), card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl]
+      `INSERT INTO cards (name, card_number, price, rarity, language, quantity, card_condition, image_url) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl]
     );
 
     res.status(201).json({
@@ -253,9 +250,9 @@ app.post('/api/cards', authenticateToken, isAdmin, upload.single('image'), async
 // Update a card (Admin only)
 app.put('/api/cards/:id', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   const cardId = req.params.id;
-  const { name, year_made, card_number, price, rarity, language, quantity, card_condition } = req.body;
+  const { name, /*year_made,*/ card_number, price, rarity, language, quantity, card_condition } = req.body;
 
-  if (!name || !year_made || !card_number || !price || !rarity || !language || !quantity || !card_condition) {
+  if (!name || !card_number || !price || !rarity || !language || !quantity || !card_condition) {
     return res.status(400).json({ error: 'Please provide all card fields.' });
   }
 
@@ -279,9 +276,9 @@ app.put('/api/cards/:id', authenticateToken, isAdmin, upload.single('image'), as
     }
 
     await pool.query(
-      `UPDATE cards SET name = ?, year_made = ?, card_number = ?, price = ?, rarity = ?, language = ?, quantity = ?, card_condition = ?, image_url = ? 
+      `UPDATE cards SET name = ?, card_number = ?, price = ?, rarity = ?, language = ?, quantity = ?, card_condition = ?, image_url = ? 
        WHERE id = ?`,
-      [name, parseInt(year_made), card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl, cardId]
+      [name, /* parseInt(year_made), */ card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl, cardId]
     );
 
     res.json({
