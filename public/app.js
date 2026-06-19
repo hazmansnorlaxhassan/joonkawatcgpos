@@ -559,18 +559,27 @@ function startQRScanner() {
 
   const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-  state.html5QrScanner.start(
-    { facingMode: "environment" },
-    config,
-    onQrScanSuccess,
-    onQrScanError
-  ).catch(err => {
-    console.error(err);
-    scannerStatus.textContent = 'Camera Error';
-    btnToggleScanner.innerHTML = '<i class="fa-solid fa-camera"></i> Start Camera Scan';
-    state.html5QrScanner = null;
-    alert('Could not start webcam scanner. Ensure you have given permissions.');
-  });
+  // Select rear camera if available and enable continuous autofocus
+  Html5QrCode.getCameras()
+    .then(cameras => {
+      const rearCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
+      const cameraConfig = rearCamera ? rearCamera.id : { facingMode: "environment", advanced: [{ focusMode: "continuous" }] };
+      state.html5QrScanner.start(cameraConfig, config, onQrScanSuccess, onQrScanError)
+        .catch(err => {
+          console.error(err);
+          scannerStatus.textContent = 'Camera Error';
+          btnToggleScanner.innerHTML = '<i class="fa-solid fa-camera"></i> Start Camera Scan';
+          state.html5QrScanner = null;
+          alert('Could not start webcam scanner. Ensure you have given permissions.');
+        });
+    })
+    .catch(err => {
+      console.error('Error accessing cameras', err);
+      scannerStatus.textContent = 'Camera Error';
+      btnToggleScanner.innerHTML = '<i class="fa-solid fa-camera"></i> Start Camera Scan';
+      state.html5QrScanner = null;
+      alert('Could not access camera devices.');
+    });
 }
 
 function stopQRScanner() {
