@@ -403,11 +403,11 @@ function renderInventory() {
     const cardPanel = document.createElement('div');
     cardPanel.className = 'card-panel glass-panel';
 
-    const cardImg = card.image_url ? `${API_BASE}${card.image_url}` : 'https://placehold.co/250x350/161a23/ffffff?text=No+Image';
+    const cardImg = `${API_BASE}/api/cards/${card.id}/image`;
 
     cardPanel.innerHTML = `
       <div class="card-image-box">
-        <img src="${cardImg}" alt="${card.name}">
+        <img src="${cardImg}" alt="${card.name}" onerror="this.src='https://placehold.co/250x350/161a23/ffffff?text=No+Image'">
         <span class="rarity-badge">${card.rarity}</span>
       </div>
       <div class="card-meta-main">

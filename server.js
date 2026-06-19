@@ -169,7 +169,7 @@ app.get('/api/cards', authenticateToken, isSalespersonOrAdmin, async (req, res) 
   const params = [];
 
   if (search) {
-    sql += ' AND (name LIKE ? OR card_number LIKE ?як)';
+    sql += ' AND (name LIKE ? OR card_number LIKE ?)';
     params.push(`%${search}%`, `%${search}%`);
   }
   if (name) {
@@ -217,6 +217,27 @@ app.get('/api/cards/:id', authenticateToken, isSalespersonOrAdmin, async (req, r
     console.error(err);
     res.status(500).json({ error: 'Database query error.' });
   }
+});
+
+// Serve card image data as a base64-encoded image
+app.get('/api/cards/:id/image', async (req, res) => {
+    try {
+      const [cards] = await pool.query('SELECT image_data FROM cards WHERE id = ?', [req.params.id]);
+      if (cards.length === 0) {
+        return res.status(404).json({ error: 'Card not found.' });
+      }
+      const imageData = cards[0].image_data;
+      if (!imageData) {
+        // Return placeholder image when no image stored
+        return res.redirect('https://placehold.co/250x350/161a23/ffffff?text=No+Image');
+      }
+      // Send image data; assume PNG for simplicity
+      res.setHeader('Content-Type', 'image/png');
+      res.send(imageData);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to retrieve image.' });
+    }
 });
 
 // Add a card (Admin only)
