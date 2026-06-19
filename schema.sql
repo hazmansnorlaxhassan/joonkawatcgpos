@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS cards (
   quantity INT NOT NULL DEFAULT 0,
   card_condition VARCHAR(50) NOT NULL, -- e.g., Near Mint, Lightly Played, etc.
   image_url VARCHAR(255) DEFAULT NULL,
+  image_data LONGBLOB DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

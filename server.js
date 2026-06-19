@@ -164,7 +164,7 @@ app.delete('/api/auth/users/:id', authenticateToken, isAdmin, async (req, res) =
 
 // List cards
 app.get('/api/cards', authenticateToken, isSalespersonOrAdmin, async (req, res) => {
-  const { name, /*year,*/ number, rarity, language, condition, search } = req.query;
+  const { name, number, rarity, language, condition, search } = req.query;
   let sql = 'SELECT * FROM cards WHERE 1=1';
   const params = [];
 
@@ -221,25 +221,31 @@ app.get('/api/cards/:id', authenticateToken, isSalespersonOrAdmin, async (req, r
 
 // Add a card (Admin only)
 app.post('/api/cards', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
-  const { name, /*year_made,*/ card_number, price, rarity, language, quantity, card_condition } = req.body;
+  const { name, card_number, price, rarity, language, quantity, card_condition } = req.body;
 
-  if (!name || /*!year_made ||*/ !card_number || !price || !rarity || !language || !quantity || !card_condition) {
+  if (!name || !card_number || !price || !rarity || !language || !quantity || !card_condition) {
     return res.status(400).json({ error: 'Please provide all card fields.' });
   }
 
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+  const imageUrl = null; // Not using file system storage
+  let imageData = null;
+  if (req.file) {
+    // Read file into buffer for BLOB storage
+    imageData = fs.readFileSync(req.file.path);
+    // Optionally delete the uploaded file after reading
+    fs.unlinkSync(req.file.path);
+  }
 
   try {
     const [result] = await pool.query(
-      `INSERT INTO cards (name, card_number, price, rarity, language, quantity, card_condition, image_url) 
+      `INSERT INTO cards (name, card_number, price, rarity, language, quantity, card_condition, image_data) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl]
+      [name, card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageData]
     );
 
     res.status(201).json({
       message: 'Card added successfully',
-      cardId: result.insertId,
-      imageUrl
+      cardId: result.insertId
     });
   } catch (err) {
     console.error(err);
@@ -250,7 +256,7 @@ app.post('/api/cards', authenticateToken, isAdmin, upload.single('image'), async
 // Update a card (Admin only)
 app.put('/api/cards/:id', authenticateToken, isAdmin, upload.single('image'), async (req, res) => {
   const cardId = req.params.id;
-  const { name, /*year_made,*/ card_number, price, rarity, language, quantity, card_condition } = req.body;
+  const { name, card_number, price, rarity, language, quantity, card_condition } = req.body;
 
   if (!name || !card_number || !price || !rarity || !language || !quantity || !card_condition) {
     return res.status(400).json({ error: 'Please provide all card fields.' });
@@ -258,32 +264,25 @@ app.put('/api/cards/:id', authenticateToken, isAdmin, upload.single('image'), as
 
   try {
     // Check if card exists
-    const [existing] = await pool.query('SELECT image_url FROM cards WHERE id = ?', [cardId]);
+    const [existing] = await pool.query('SELECT id FROM cards WHERE id = ?', [cardId]);
     if (existing.length === 0) {
       return res.status(404).json({ error: 'Card not found.' });
     }
 
-    let imageUrl = existing[0].image_url;
+    let imageData = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
-      // Optional: Delete old file if exists
-      if (existing[0].image_url) {
-        const oldPath = path.join(__dirname, 'public', existing[0].image_url);
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
+      imageData = fs.readFileSync(req.file.path);
+      fs.unlinkSync(req.file.path);
     }
 
     await pool.query(
-      `UPDATE cards SET name = ?, card_number = ?, price = ?, rarity = ?, language = ?, quantity = ?, card_condition = ?, image_url = ? 
+      `UPDATE cards SET name = ?, card_number = ?, price = ?, rarity = ?, language = ?, quantity = ?, card_condition = ?, image_data = ? 
        WHERE id = ?`,
-      [name, /* parseInt(year_made), */ card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageUrl, cardId]
+      [name, card_number, parseFloat(price), rarity, language, parseInt(quantity), card_condition, imageData, cardId]
     );
 
     res.json({
-      message: 'Card updated successfully',
-      imageUrl
+      message: 'Card updated successfully'
     });
   } catch (err) {
     console.error(err);
