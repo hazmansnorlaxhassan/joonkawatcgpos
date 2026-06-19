@@ -407,7 +407,7 @@ function renderInventory() {
 
     cardPanel.innerHTML = `
       <div class="card-image-box">
-        <img src="${cardImg}" alt="${card.name}" onerror="this.src='https://placehold.co/250x350/161a23/ffffff?text=No+Image'">
+        <img src="${cardImg}" alt="${card.name}">
         <span class="rarity-badge">${card.rarity}</span>
       </div>
       <div class="card-meta-main">
@@ -560,7 +560,7 @@ function startQRScanner() {
   const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
   state.html5QrScanner.start(
-    { facingMode: "environment", advanced: [{ focusMode: "continuous" }] },
+    { facingMode: "environment" },
     config,
     onQrScanSuccess,
     onQrScanError
