@@ -560,8 +560,7 @@ function startQRScanner() {
   const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
   state.html5QrScanner.start(
-    { facingMode: "environment", advanced: [{ focusMode: "continuous" }] },
-
+    { facingMode: "environment" },
     config,
     onQrScanSuccess,
     onQrScanError
