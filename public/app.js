@@ -559,9 +559,7 @@ function startQRScanner() {
 
   const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-  // Select rear camera if available and enable continuous autofocus
-  Html5QrCode.getCameras()
-    .then(cameras => {
+  Html5Qrcode.getCameras().then(cameras => {
       const rearCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
       const cameraConfig = rearCamera ? rearCamera.id : { facingMode: "environment", advanced: [{ focusMode: "continuous" }] };
       state.html5QrScanner.start(cameraConfig, config, onQrScanSuccess, onQrScanError)
