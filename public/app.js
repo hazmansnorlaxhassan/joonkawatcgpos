@@ -415,7 +415,7 @@ function renderInventory() {
         <span class="card-price text-gradient">$${parseFloat(card.price).toFixed(2)}</span>
       </div>
       <div class="card-spec-grid">
-        <div class="card-spec-item">ID: <strong>${card.id}</strong></div>
+        <div class="card-spec-item">Name:ID <strong>${card.id}</strong></div>
         <div class="card-spec-item">No: <strong>${card.card_number}</strong></div>
         <div class="card-spec-item">Lang: <strong>${card.language}</strong></div>
         <div class="card-spec-item">Cond: <strong>${card.card_condition}</strong></div>
@@ -882,6 +882,7 @@ async function loadReports() {
 
       tr.innerHTML = `
         <td>#${sale.sale_id}</td>
+        <td>${sale.card_id}</td>
         <td><strong>${sale.card_name}</strong> <span class="text-faded">${sale.card_number}</span></td>
         <td>${sale.quantity}</td>
         <td>$${parseFloat(sale.base_price).toFixed(2)}</td>

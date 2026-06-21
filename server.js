@@ -448,6 +448,7 @@ app.get('/api/sales/report', authenticateToken, isSalespersonOrAdmin, async (req
   let query = `
     SELECT 
       s.id as sale_id,
+      s.card_id as card_id,
       s.quantity,
       s.discount_type,
       s.discount_value,
