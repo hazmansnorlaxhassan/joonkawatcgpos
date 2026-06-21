@@ -415,10 +415,11 @@ function renderInventory() {
         <span class="card-price text-gradient">$${parseFloat(card.price).toFixed(2)}</span>
       </div>
       <div class="card-spec-grid">
-        
+       
         <div class="card-spec-item">No: <strong>${card.card_number}</strong></div>
         <div class="card-spec-item">Lang: <strong>${card.language}</strong></div>
         <div class="card-spec-item">Cond: <strong>${card.card_condition}</strong></div>
+        <div class="card-spec-item" >QR Code: <strong><img src="${API_BASE}/api/cards/${card.id}/qr" alt="QR" style="height: 70px; width:70px;"></strong></div>
         <div class="card-spec-item" style="grid-column: 1 / -1">Stock Qty: <strong class="${card.quantity === 0 ? 'text-danger' : ''}">${card.quantity}</strong></div>
       </div>
       <div class="card-actions-row">
@@ -1042,10 +1043,10 @@ function renderStickerPreview() {
     const rarityText = card.rarity.length > 12 ? card.rarity.substring(0, 10) + '..' : card.rarity;
 
     stickerDiv.innerHTML = `
-      <div class="sticker-info">
+      <div class="sticker-info"> 
         <div class="sticker-title">${nameText}</div>
         <div class="sticker-spec">No: ${card.card_number}</div>
-        
+        <div class="sticker-spec">Code: ${card.id}</div>
         <div class="sticker-spec">Rarity: ${rarityText}</div>
         <div class="sticker-price">$${parseFloat(card.price).toFixed(2)}</div>
       </div>
