@@ -415,7 +415,7 @@ function renderInventory() {
         <span class="card-price text-gradient">$${parseFloat(card.price).toFixed(2)}</span>
       </div>
       <div class="card-spec-grid">
-       
+        <div class="card-spec-item">ID: <strong>${card.id}</strong></div>
         <div class="card-spec-item">No: <strong>${card.card_number}</strong></div>
         <div class="card-spec-item">Lang: <strong>${card.language}</strong></div>
         <div class="card-spec-item">Cond: <strong>${card.card_condition}</strong></div>
