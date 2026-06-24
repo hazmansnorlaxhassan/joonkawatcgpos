@@ -415,7 +415,7 @@ function renderInventory() {
         <span class="card-price text-gradient">$${parseFloat(card.price).toFixed(2)}</span>
       </div>
       <div class="card-spec-grid">
-        <div class="card-spec-item">Name:ID <strong>${card.id}</strong></div>
+        <div class="card-spec-item">ID: <strong>${card.id}</strong></div>
         <div class="card-spec-item">No: <strong>${card.card_number}</strong></div>
         <div class="card-spec-item">Lang: <strong>${card.language}</strong></div>
         <div class="card-spec-item">Cond: <strong>${card.card_condition}</strong></div>
@@ -561,17 +561,17 @@ function startQRScanner() {
   const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
   Html5Qrcode.getCameras().then(cameras => {
-      const rearCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
-      const cameraConfig = rearCamera ? rearCamera.id : { facingMode: "environment", advanced: [{ focusMode: "continuous" }] };
-      state.html5QrScanner.start(cameraConfig, config, onQrScanSuccess, onQrScanError)
-        .catch(err => {
-          console.error(err);
-          scannerStatus.textContent = 'Camera Error';
-          btnToggleScanner.innerHTML = '<i class="fa-solid fa-camera"></i> Start Camera Scan';
-          state.html5QrScanner = null;
-          alert('Could not start webcam scanner. Ensure you have given permissions.');
-        });
-    })
+    const rearCamera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
+    const cameraConfig = rearCamera ? rearCamera.id : { facingMode: "environment", advanced: [{ focusMode: "continuous" }] };
+    state.html5QrScanner.start(cameraConfig, config, onQrScanSuccess, onQrScanError)
+      .catch(err => {
+        console.error(err);
+        scannerStatus.textContent = 'Camera Error';
+        btnToggleScanner.innerHTML = '<i class="fa-solid fa-camera"></i> Start Camera Scan';
+        state.html5QrScanner = null;
+        alert('Could not start webcam scanner. Ensure you have given permissions.');
+      });
+  })
     .catch(err => {
       console.error('Error accessing cameras', err);
       scannerStatus.textContent = 'Camera Error';
@@ -883,7 +883,7 @@ async function loadReports() {
       tr.innerHTML = `
         <td>#${sale.sale_id}</td>
         <td>${sale.card_id}</td>
-        <td><strong>${sale.card_name}</strong> <span class="text-faded">${sale.card_number}</span></td>
+        <td><strong>${sale.card_name}</strong> <span class="text-faded"> (${sale.card_number})</span></td>
         <td>${sale.quantity}</td>
         <td>$${parseFloat(sale.base_price).toFixed(2)}</td>
         <td>${discText}</td>
