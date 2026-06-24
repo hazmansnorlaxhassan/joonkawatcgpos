@@ -467,7 +467,7 @@
             </div>-->
           </div>
           <div class="form-row-2">
-            <div class="form-group">
+            <div class="form-group" style="padding-right: 10px;">
               <label for="card-number">Card Number</label>
               <input type="text" id="card-number" required placeholder="e.g. IOC-025">
             </div>
@@ -476,8 +476,8 @@
               <input type="number" id="card-price" step="0.01" min="0.01" required placeholder="e.g. 79.99">
             </div>
           </div>
-          <div class="form-row-3">
-            <div class="form-group">
+          <div class="form-row-2">
+            <div class="form-group" style="padding-right: 10px;">
               <label for="card-rarity">Rarity</label>
               <select id="card-rarity" required>
                 <option value="Common">Common</option>
@@ -500,7 +500,10 @@
                 <option value="German">German</option>
               </select>
             </div>
-            <div class="form-group">
+
+          </div>
+          <div class="form-row-2">
+            <div class="form-group" style="padding-right: 10px;">
               <label for="card-condition">Condition</label>
               <select id="card-condition" required>
                 <option value="Mint (M)">Mint (M)</option>
@@ -511,12 +514,13 @@
                 <option value="Damaged (DMG)">Damaged (DMG)</option>
               </select>
             </div>
-          </div>
-          <div class="form-row-2">
             <div class="form-group">
               <label for="card-quantity">Quantity</label>
               <input type="number" id="card-quantity" value="1" min="0" required>
             </div>
+
+          </div>
+          <div class="form-row-2" style="padding-right: 10px;">
             <div class="form-group">
               <label for="card-image">Card Image</label>
               <input type="file" id="card-image" accept="image/*">
