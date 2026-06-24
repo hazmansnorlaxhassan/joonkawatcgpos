@@ -419,8 +419,9 @@ function renderInventory() {
         <div class="card-spec-item">No: <strong>${card.card_number}</strong></div>
         <div class="card-spec-item">Lang: <strong>${card.language}</strong></div>
         <div class="card-spec-item">Cond: <strong>${card.card_condition}</strong></div>
+        <div class="card-spec-item">Stock Qty: <strong class="${card.quantity === 0 ? 'text-danger' : ''}">${card.quantity}</strong></div>
         <div class="card-spec-item" >QR Code: <strong><img src="${API_BASE}/api/cards/${card.id}/qr" alt="QR" style="height: 70px; width:70px;"></strong></div>
-        <div class="card-spec-item" style="grid-column: 1 / -1">Stock Qty: <strong class="${card.quantity === 0 ? 'text-danger' : ''}">${card.quantity}</strong></div>
+       
       </div>
       <div class="card-actions-row">
         ${state.user.role === 'admin' ? `
