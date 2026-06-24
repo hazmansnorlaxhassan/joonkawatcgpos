@@ -6,7 +6,7 @@ const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const QRCode = require('qrcode');
-
+const ExcelJS = require('exceljs');
 const { pool, initDB } = require('./db');
 const { authenticateToken, isAdmin, isSalespersonOrAdmin, JWT_SECRET } = require('./auth');
 
@@ -477,6 +477,96 @@ app.get('/api/sales/report', authenticateToken, isSalespersonOrAdmin, async (req
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to retrieve sales report.' });
+  }
+});
+// Export inventory to Excel
+app.get('/api/inventory/export', authenticateToken, isSalespersonOrAdmin, async (req, res) => {
+  try {
+    const [cards] = await pool.query('SELECT * FROM cards');
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Inventory');
+
+    sheet.columns = [
+      { header: 'ID', key: 'id', width: 10 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Year', key: 'year_made', width: 10 },
+      { header: 'Card Number', key: 'card_number', width: 15 },
+      { header: 'Price', key: 'price', width: 10 },
+      { header: 'Rarity', key: 'rarity', width: 12 },
+      { header: 'Language', key: 'language', width: 12 },
+      { header: 'Quantity', key: 'quantity', width: 10 },
+      { header: 'Condition', key: 'card_condition', width: 12 },
+      { header: 'Created At', key: 'created_at', width: 20 }
+    ];
+
+    cards.forEach(c => sheet.addRow(c));
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="inventory.xlsx"');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to export inventory.' });
+  }
+});
+
+// Export sales report to Excel
+app.get('/api/sales/export', authenticateToken, isSalespersonOrAdmin, async (req, res) => {
+  try {
+    const role = req.user.role;
+    const userId = req.user.id;
+    let query = `
+      SELECT 
+        s.id as sale_id,
+        s.quantity,
+        s.discount_type,
+        s.discount_value,
+        s.total_price,
+        s.payment_method,
+        s.sale_timestamp,
+        c.name as card_name,
+        c.card_number,
+        c.price as base_price,
+        u.name as salesperson_name
+      FROM sales s
+      JOIN cards c ON s.card_id = c.id
+      JOIN users u ON s.salesperson_id = u.id
+    `;
+    const params = [];
+    if (role === 'salesperson') {
+      query += ' WHERE s.salesperson_id = ?';
+      params.push(userId);
+    }
+    query += ' ORDER BY s.sale_timestamp DESC';
+    const [sales] = await pool.query(query, params);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Sales');
+
+    sheet.columns = [
+      { header: 'Sale ID', key: 'sale_id', width: 10 },
+      { header: 'Card', key: 'card_name', width: 30 },
+      { header: 'Card Number', key: 'card_number', width: 15 },
+      { header: 'Quantity', key: 'quantity', width: 10 },
+      { header: 'Base Price', key: 'base_price', width: 12 },
+      { header: 'Total Price', key: 'total_price', width: 12 },
+      { header: 'Discount Type', key: 'discount_type', width: 12 },
+      { header: 'Discount Value', key: 'discount_value', width: 12 },
+      { header: 'Payment Method', key: 'payment_method', width: 12 },
+      { header: 'Salesperson', key: 'salesperson_name', width: 20 },
+      { header: 'Timestamp', key: 'sale_timestamp', width: 20 }
+    ];
+
+    sales.forEach(s => sheet.addRow(s));
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="sales_report.xlsx"');
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to export sales report.' });
   }
 });
 

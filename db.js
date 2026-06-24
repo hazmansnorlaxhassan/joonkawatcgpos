@@ -28,11 +28,11 @@ require('dotenv').config();
 
 
 const pool = mysql.createPool({
-  host: process.env.Host || "sql12.freesqldatabase.com",
-  user: process.env.Database_user || "sql12830618",
-  port: process.env.Port_number || 3306,
-  password: process.env.Database_password || "akWdDrgGyp",
-  database: process.env.Database_name || "sql12830618",
+  host: process.env.Host,
+  user: process.env.Database_user,
+  port: process.env.Port_number,
+  password: process.env.Database_password,
+  database: process.env.Database_name,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -46,13 +46,13 @@ async function initDB() {
     connection = await mysql.createConnection({
       //host: process.env.DB_HOST || '127.0.0.1',
       //host: process.env.MYSQLHOST || 'thomas.proxy.rlwy.net',
-      host: process.env.Host || "sql12.freesqldatabase.com",
+      host: process.env.Host,
       //user: process.env.DB_USER || 'root',
       //user: process.env.MYSQLUSER || 'root',
-      user: process.env.Database_user || "sql12830618",
+      user: process.env.Database_user,
       //password: process.env.DB_PASSWORD || ''
       //password: process.env.MYSQLPASSWORD || 'oZCdRYYavXImuWFpjSQAJxsjYsUszgpO',
-      password: process.env.Database_password || "akWdDrgGyp",
+      password: process.env.Database_password,
       //port: process.env.MYSQLPORT || 59394,
       port: process.env.Port_number || 3306,
 
@@ -61,7 +61,7 @@ async function initDB() {
     // Create database if not exists
     //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'tcg_pos'}\``);
     //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQLDATABASE || 'railway'}\``);
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.Database_name || 'sql12830618'}\``);
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.Database_name}\``);
     await connection.end();
 
     // Now initialize schema using the pool
