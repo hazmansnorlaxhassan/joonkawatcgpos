@@ -1167,13 +1167,13 @@ input[type="file"] {
 }
 
 .form-row-2 {
-  display: grid;
+  display: flex;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
 .form-row-3 {
-  display: grid;
+  display: flex;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
