@@ -148,9 +148,8 @@
         <div class="filter-drawer glass-panel hidden" id="filter-drawer">
           <div class="filter-grid">
             <div class="form-group">
-              <!--<label>Year Made</label>
-              <input type="number" id="filter-year" placeholder="year">-->
-              <!-- placeholder for future filter -->
+              <label>Year Made</label>
+              <input type="number" id="filter-year" placeholder="year">
             </div>
             <div class="form-group">
               <label>Rarity</label>
@@ -456,28 +455,26 @@
         <input type="hidden" id="card-form-id">
         <div class="modal-body">
           <div class="form-row-2">
-            <div class="form-group" style="width: 100%;">
+            <div class="form-group">
               <label for="card-name">Card Name</label>
               <input type="text" id="card-name" required placeholder="e.g. 1st Edition Holo Dark Charizard">
             </div>
-
-          </div>
-          <div class="form-row-2">
-            <!-- <div class="form-group">
+            <!--<div class="form-group">
               <label for="card-year">Year Made</label>
               <input type="number" id="card-year" required placeholder="e.g. 2004">
-            </div> -->
+            </div>-->
+          </div>
+          <div class="form-row-2">
             <div class="form-group">
               <label for="card-number">Card Number</label>
               <input type="text" id="card-number" required placeholder="e.g. IOC-025">
             </div>
-
-          </div>
-          <div class="form-row-2">
             <div class="form-group">
               <label for="card-price">Price ($)</label>
               <input type="number" id="card-price" step="0.01" min="0.01" required placeholder="e.g. 79.99">
             </div>
+          </div>
+          <div class="form-row-3">
             <div class="form-group">
               <label for="card-rarity">Rarity</label>
               <select id="card-rarity" required>
@@ -490,9 +487,6 @@
                 <option value="Secret Rare">Secret Rare</option>
               </select>
             </div>
-
-          </div>
-          <div class="form-row-2">
             <div class="form-group">
               <label for="card-language">Language</label>
               <select id="card-language" required>
@@ -515,9 +509,7 @@
                 <option value="Damaged (DMG)">Damaged (DMG)</option>
               </select>
             </div>
-
           </div>
-
           <div class="form-row-2">
             <div class="form-group">
               <label for="card-quantity">Quantity</label>

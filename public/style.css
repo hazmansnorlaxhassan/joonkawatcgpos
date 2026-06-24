@@ -1167,14 +1167,14 @@ input[type="file"] {
 }
 
 .form-row-2 {
-  display: flex;
-  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
 .form-row-3 {
-  display: flex;
-  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
 
@@ -1185,6 +1185,7 @@ input[type="file"] {
   padding: 20px 24px;
   border-top: 1px solid var(--border-glass);
   background-color: rgba(0, 0, 0, 0.1);
+  margin-top: auto;
 }
 
 /* Alert Notification Banners */
@@ -1462,6 +1463,7 @@ input[type="file"] {
   .sidebar-footer .btn {
     padding: 12px;
     justify-content: center;
+
   }
 
   .sidebar-footer .btn i {
@@ -1585,10 +1587,12 @@ input[type="file"] {
   .sidebar.mobile-open .sidebar-footer .btn {
     padding: 12px 24px;
     justify-content: flex-start;
+    margin-top: auto;
   }
 
   .sidebar.mobile-open .sidebar-footer .btn i {
     margin-right: 8px;
+
   }
 
   /* Content viewport fills full width */
@@ -1718,6 +1722,7 @@ input[type="file"] {
   .modal-header,
   .modal-footer {
     padding: 14px 16px;
+    margin-top: auto;
   }
 
   /* Basket summary */
