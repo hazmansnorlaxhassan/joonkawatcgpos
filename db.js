@@ -28,12 +28,11 @@ require('dotenv').config();
 
 
 const pool = mysql.createPool({
-  host: process.env.Host || process.env.DB_HOST,
-  user: process.env.Database_user || process.env.DB_USER,
-  port: process.env.Port_number || process.env.DB_PORT,
-  password: process.env.Database_password || process.env.DB_PASSWORD,
-  database: process.env.Database_name || process.env.DB_NAME,
-  
+  host: process.env.Host,
+  user: process.env.Database_user,
+  port: process.env.Port_number,
+  password: process.env.Database_password,
+  database: process.env.Database_name,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -41,34 +40,8 @@ const pool = mysql.createPool({
 
 
 async function initDB() {
+  let connection;
   try {
-
-    // 1. First try to connect to the database directly
-    let conn;
-    try {
-      conn = await pool.getConnection();
-      console.log('Successfully connected to the database.');
-      conn.release();
-    } catch (err) {
-      // 2. If the database doesn't exist, try to create it (mostly for local development)
-      if (err.code === 'ER_BAD_DB_ERROR') {
-        console.log('Database does not exist. Attempting to create it...');
-        const tempConnection = await mysql.createConnection({
-          host: process.env.Host || process.env.DB_HOST,
-          user: process.env.Database_user || process.env.DB_USER,
-          password: process.env.Database_password || process.env.DB_PASSWORD,
-          port: process.env.Port_number || process.env.DB_PORT,
-        });
-
-        const dbName = process.env.Database_name || process.env.DB_NAME;
-        await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
-        await tempConnection.end();
-        console.log('Database created successfully.');
-      } else {
-        throw err; // Re-throw if it's an access denied or other error
-      }
-    }
-
     // Connect without a database first to ensure the database exists
     connection = await mysql.createConnection({
       //host: process.env.DB_HOST || '127.0.0.1',
@@ -91,19 +64,22 @@ async function initDB() {
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.Database_name}\``);
     await connection.end();
 
-
     // Now initialize schema using the pool
     const schemaPath = path.join(__dirname, 'schema.sql');
     if (fs.existsSync(schemaPath)) {
       const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 
       // Execute the schema statements one by one (splitting on semicolons)
+      // Note: We need a connection from the pool to execute
       const conn = await pool.getConnection();
       try {
         const statements = schemaSql
           .split(';')
           .map(s => s.trim())
           .filter(s => s.length > 0);
+        
+        // Ensure year_made column is removed if present
+        //statements.push('ALTER TABLE cards DROP COLUMN IF EXISTS year_made');
 
         for (const sql of statements) {
           await conn.query(sql);
@@ -131,7 +107,7 @@ async function initDB() {
       console.log('----------------------------------------------------');
     }
   } catch (error) {
-    console.error('Error during database initialization:', error.message || error);
+    console.error('Error during database initialization:', error);
   }
 }
 
